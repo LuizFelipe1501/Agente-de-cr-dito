@@ -8,7 +8,6 @@ import { AgentTimeline } from '@/components/AgentTimeline';
 import { AnalysisResults } from '@/components/AnalysisResults';
 import { AuditTrailView } from '@/components/AuditTrailView';
 import { RagPolicyModal } from '@/components/RagPolicyModal';
-import { ApiKeyModal } from '@/components/ApiKeyModal';
 
 import { PRELOADED_CUSTOMERS } from '@/lib/mockProfiles';
 import { CustomerInput, AnalysisResultFull, AuditTrailLog, AgentExecutionStep } from '@/types/credit';
@@ -73,10 +72,8 @@ export default function HomePage() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResultFull | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditTrailLog[]>([]);
 
-  // Modals
+  // RAG Modal State
   const [isRagModalOpen, setIsRagModalOpen] = useState<boolean>(false);
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
-  const [geminiApiKey, setGeminiApiKey] = useState<string>('');
 
   // Stats Counters
   const [stats, setStats] = useState({
@@ -85,18 +82,6 @@ export default function HomePage() {
     pendingDocs: 318,
     humanReview: 212
   });
-
-  // Load API Key from localStorage if present
-  useEffect(() => {
-    const saved = localStorage.getItem('klarna_gemini_key');
-    if (saved) setGeminiApiKey(saved);
-  }, []);
-
-  const handleSaveApiKey = (key: string) => {
-    setGeminiApiKey(key);
-    if (key) localStorage.setItem('klarna_gemini_key', key);
-    else localStorage.removeItem('klarna_gemini_key');
-  };
 
   // Run Multi-Agent Credit Analysis Flow
   const handleRunAnalysis = async (input: CustomerInput) => {
@@ -112,7 +97,8 @@ export default function HomePage() {
     }
 
     try {
-      const fullResult = await executeFullCreditAnalysis(input, geminiApiKey);
+      // Execute multi-agent pipeline
+      const fullResult = await executeFullCreditAnalysis(input);
       setAnalysisResult(fullResult);
       setAgentSteps(fullResult.executionSteps);
 
@@ -128,7 +114,8 @@ export default function HomePage() {
         riskLevel: fullResult.supervisor.riskLevel,
         decision: fullResult.supervisor.finalDecision,
         confidencePct: fullResult.supervisor.confidencePct,
-        requiresHumanReview: fullResult.supervisor.requiresHumanReview
+        requiresHumanReview: fullResult.supervisor.requiresHumanReview,
+        openFinanceStatus: fullResult.customer.openFinance.isConnected ? 'Conectado' : 'Não Autorizado'
       };
 
       setAuditLogs((prev) => [newAuditLog, ...prev]);
@@ -158,7 +145,7 @@ export default function HomePage() {
   // Trigger default analysis on initial load
   useEffect(() => {
     handleRunAnalysis(PRELOADED_CUSTOMERS[0]);
-    // eslint-disable-next-line react-hooks-[#84]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAnalystAction = (action: 'APROVADO' | 'SOLICITADO_DOCS' | 'ENCAMINHADO_HUMANO', notes: string) => {
@@ -193,8 +180,6 @@ export default function HomePage() {
       {/* Top Navbar */}
       <Navbar
         onOpenRag={() => setIsRagModalOpen(true)}
-        onOpenApiKey={() => setIsApiKeyModalOpen(true)}
-        hasCustomKey={Boolean(geminiApiKey)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
@@ -262,25 +247,18 @@ export default function HomePage() {
       <footer className="w-full border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            <span className="font-bold text-pink-400">Klarna Smart Credit AI</span> • Protótipo Hackathon de Apoio à Concessão de Crédito
+            <span className="font-bold text-pink-400">Klarna Smart Credit AI</span> • Protótipo de Apoio à Concessão de Crédito
           </div>
           <div>
-            Desenvolvido com Next.js 14, Tailwind CSS, Google Gemini AI & Arquitetura Multi-Agente RAG/XAI
+            Desenvolvido com Next.js 14, Tailwind CSS, Google Gemini 2.0 Flash & Arquitetura Multi-Agente RAG/XAI
           </div>
         </div>
       </footer>
 
-      {/* Modals */}
+      {/* RAG Modal */}
       <RagPolicyModal
         isOpen={isRagModalOpen}
         onClose={() => setIsRagModalOpen(false)}
-      />
-
-      <ApiKeyModal
-        isOpen={isApiKeyModalOpen}
-        onClose={() => setIsApiKeyModalOpen(false)}
-        onSaveKey={handleSaveApiKey}
-        currentKey={geminiApiKey}
       />
 
     </div>

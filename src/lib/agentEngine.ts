@@ -254,8 +254,6 @@ export async function runExplainabilityAgent(
   if (apiKey) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
       const prompt = `Você é o Agente de Explicabilidade (XAI) da Klarna Smart Credit AI.
 Explique a análise de crédito de forma transparente e humanizada em Português.
 
@@ -271,8 +269,20 @@ Dados do Cliente:
 
 Gere um parágrafo conciso explicando como os dados de Open Finance e comportamento financeiro influenciaram o resultado.`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      // Use Gemini 2.0 Flash (latest DeepMind model) with fallback chain
+      const modelNames = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+      let text = '';
+
+      for (const mName of modelNames) {
+        try {
+          const model = genAI.getGenerativeModel({ model: mName });
+          const result = await model.generateContent(prompt);
+          text = result.response.text();
+          if (text) break;
+        } catch (mErr) {
+          console.warn(`Model ${mName} call failed, trying fallback:`, mErr);
+        }
+      }
       if (text) summary = text.trim();
     } catch (e) {
       console.warn('Gemini XAI fallback:', e);
@@ -346,8 +356,6 @@ export async function runSmartSupervisorAgent(
   if (apiKey) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
       const prompt = `Você é o Supervisor Inteligente da Klarna Smart Credit AI.
 Decisão: ${finalDecision}
 Risco: ${risk.riskLevel} (PD ${risk.defaultProbabilityPct}%)
@@ -360,8 +368,21 @@ Retorne JSON sem markdown:
   "customerFacing": "mensagem amigável para o cliente no app Klarna"
 }`;
 
-      const result = await model.generateContent(prompt);
-      const cleanJson = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+      const modelNames = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+      let text = '';
+
+      for (const mName of modelNames) {
+        try {
+          const model = genAI.getGenerativeModel({ model: mName });
+          const result = await model.generateContent(prompt);
+          text = result.response.text();
+          if (text) break;
+        } catch (mErr) {
+          console.warn(`Supervisor model ${mName} failed, trying fallback:`, mErr);
+        }
+      }
+
+      const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleanJson);
       justification = parsed.justification;
       customerFacingExplanation = parsed.customerFacing;
