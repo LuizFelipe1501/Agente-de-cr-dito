@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ShieldCheck, BookOpen, Activity, Sparkles, Cpu } from 'lucide-react';
+import { ShieldCheck, BookOpen, Activity, LayoutDashboard } from 'lucide-react';
 
 interface NavbarProps {
   onOpenRag: () => void;
@@ -15,88 +15,77 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+    <header className="z-40 w-full border-b border-slate-800 bg-black">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         
         {/* Brand Logo & Name */}
         <div className="flex items-center space-x-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 p-0.5 shadow-glow-pink">
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-slate-950">
-              <span className="font-extrabold text-pink-400 text-lg tracking-tighter">K.</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-600 bg-gradient-to-br from-slate-100 to-slate-500 shadow-[0_0_24px_rgba(255,255,255,0.08)]">
+            <div className="flex h-[34px] w-[34px] items-center justify-center rounded-md bg-black">
+              <span className="font-extrabold text-slate-100 text-lg tracking-tighter">K.</span>
             </div>
           </div>
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-xl font-black tracking-tight text-white">
-                Klarna<span className="text-pink-400">.</span>
+                Klarna<span className="text-slate-400">.</span>
               </span>
-              <span className="rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-semibold text-pink-400 border border-pink-500/20">
-                Smart Credit AI
+              <span className="rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                Credit intelligence
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden sm:block">
-              Camada Inteligente de Apoio à Concessão de Crédito com IA Explicável & RAG
+            <p className="text-[11px] text-slate-500 hidden sm:block">
+              Análise de crédito com decisões rastreáveis
             </p>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="hidden md:flex items-center space-x-1 rounded-lg bg-slate-900/90 p-1 border border-slate-800">
+        <nav className="hidden md:flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950 p-1">
           <button
             onClick={() => setActiveTab('demo')}
             className={`flex items-center space-x-2 rounded-md px-3.5 py-1.5 text-xs font-medium transition-all ${
               activeTab === 'demo'
-                ? 'bg-gradient-to-r from-pink-500/20 to-rose-500/20 text-pink-300 border border-pink-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-slate-100 text-slate-950'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <Sparkles className="h-3.5 w-3.5 text-pink-400" />
-            <span>Painel de Análise</span>
+            <LayoutDashboard className="h-3.5 w-3.5" />
+            <span>Análises</span>
           </button>
 
           <button
             onClick={() => setActiveTab('audit')}
             className={`flex items-center space-x-2 rounded-md px-3.5 py-1.5 text-xs font-medium transition-all ${
               activeTab === 'audit'
-                ? 'bg-gradient-to-r from-pink-500/20 to-rose-500/20 text-pink-300 border border-pink-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-slate-100 text-slate-950'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <Activity className="h-3.5 w-3.5 text-cyan-400" />
-            <span>Trilha de Auditoria</span>
+            <Activity className="h-3.5 w-3.5" />
+            <span>Auditoria</span>
           </button>
 
           <button
             onClick={() => setActiveTab('policies')}
             className={`flex items-center space-x-2 rounded-md px-3.5 py-1.5 text-xs font-medium transition-all ${
               activeTab === 'policies'
-                ? 'bg-gradient-to-r from-pink-500/20 to-rose-500/20 text-pink-300 border border-pink-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-slate-100 text-slate-950'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
-            <span>Base RAG de Políticas</span>
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>Políticas</span>
           </button>
         </nav>
 
-        {/* System AI Status Badge & RAG Button */}
         <div className="flex items-center space-x-2">
-          {/* Gemini AI System Badge */}
-          <div className="flex items-center space-x-2 rounded-lg bg-slate-900/90 px-3 py-1.5 text-xs border border-slate-800">
-            <Cpu className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-slate-300 font-medium hidden sm:inline">
-              Gemini 2.0 Flash (Ativo)
-            </span>
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-
-          {/* RAG Knowledge Base Button */}
           <button
             onClick={onOpenRag}
-            className="flex items-center space-x-1.5 rounded-lg bg-pink-500/10 px-3 py-1.5 text-xs font-medium text-pink-300 border border-pink-500/20 hover:bg-pink-500/20 transition-colors"
+            className="flex items-center space-x-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-200 transition-colors hover:border-slate-500 hover:bg-slate-800"
           >
-            <ShieldCheck className="h-3.5 w-3.5 text-pink-400" />
-            <span className="hidden sm:inline">Políticas RAG</span>
+            <ShieldCheck className="h-3.5 w-3.5 text-slate-300" />
+            <span className="hidden sm:inline">Consultar base</span>
           </button>
         </div>
 

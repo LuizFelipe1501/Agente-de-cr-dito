@@ -175,7 +175,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex-1 bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="flex min-h-screen flex-1 flex-col bg-black text-slate-100 font-sans">
       
       {/* Top Navbar */}
       <Navbar
@@ -185,7 +185,7 @@ export default function HomePage() {
       />
 
       {/* Main Content Body */}
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
         
         {/* Navigation Tab: DEMO PAINEL DE ANÁLISE */}
         {activeTab === 'demo' && (
@@ -244,10 +244,10 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+      <footer className="w-full border-t border-slate-800 bg-black py-5 text-center text-xs text-slate-500">
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            <span className="font-bold text-pink-400">Klarna Smart Credit AI</span> • Protótipo de Apoio à Concessão de Crédito
+            <span className="font-bold text-slate-200">Klarna Credit Intelligence</span> • Protótipo de Apoio à Concessão de Crédito
           </div>
           <div>
             Desenvolvido com Next.js 14, Tailwind CSS, Google Gemini 2.0 Flash & Arquitetura Multi-Agente RAG/XAI
